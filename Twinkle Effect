@@ -1,0 +1,62 @@
+#include <Adafruit_NeoPixel.h>  //Include the NeoPixel library
+ 
+#define NEO_PIN 0        // DIGITAL IO pin for NeoPixel OUTPUT from GEMMA      // DIGITAL IO pin for momentary touch sensor INPUT to GEMMA
+#define PIXEL_COUNT 20   // Number of NeoPixels connected to GEMMA
+#define DELAY_MILLIS 100  // delay between blinks, smaller numbers are faster 
+#define DELAY_MULT 8     // Randomization multiplier on the delay speed of the effect
+#define BRIGHT 40        // Brightness of the pixels, max is 255
+#define COLORS 255       //color value, don't change this!
+ 
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(PIXEL_COUNT, NEO_PIN, NEO_GRB + NEO_KHZ800);
+ 
+int showColor = 0;    //color mode for cycling, change this to change the color of the LEDs.
+ 
+void setup() {
+  
+  pixels.begin();
+  pixels.setBrightness(BRIGHT);
+  pixels.show();                //Set all pixels to "off"
+}
+ 
+ 
+void loop() {
+  int RColor = 100; //color (0-255) values to be set by cylcing touch switch, initially GOLD
+  int GColor = 0 ;
+  int BColor = 0 ;
+  
+       if (showColor==0) {//random
+         RColor = random(COLORS);
+         GColor = random(COLORS);
+         BColor = random(COLORS); 
+       }
+       if (showColor==1) {//Pixie GOLD
+         RColor = 255;
+         GColor = 222;
+         BColor = 30; 
+       }
+       if (showColor==2) {//Alchemy BLUE
+         RColor = 50;
+         GColor = 255;
+         BColor = 255; 
+       }
+       if (showColor==3) {//Animal ORANGE
+         RColor = 255;
+         GColor = 100;
+         BColor = 0; 
+       }
+       if (showColor==4) {//Tinker GREEN
+         RColor = 0;
+         GColor = 255;
+         BColor = 40; 
+       }
+  
+  //sparkling
+  int p = random(PIXEL_COUNT); //select a random pixel
+  pixels.setPixelColor(p,RColor,GColor,BColor); //color value comes from cycling state of momentary switch
+  pixels.show();
+  delay(DELAY_MILLIS * random(DELAY_MULT) ); //delay value randomized to up to DELAY_MULT times longer
+  pixels.setPixelColor(p, RColor/10, GColor/10, BColor/10); //set to a dimmed version of the state color
+  pixels.show();
+  pixels.setPixelColor(p+1, RColor/15, GColor/15, BColor/15); //set a neighbor pixel to an even dimmer value
+  pixels.show();
+  }
